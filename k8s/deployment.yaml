@@ -1,0 +1,63 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: knot
+  name: knot
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: knot
+    spec:
+      containers:
+      - name: knotd
+        image: cznic/knot
+        imagePullPolicy: IfNotPresent
+        args:
+          - "/sbin/knotd"
+        ports:
+        - containerPort: 53
+          protocol: TCP
+        - containerPort: 53
+          protocol: UDP
+        livenessProbe:
+          tcpSocket:
+            port: 53
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          tcpSocket:
+            port: 53
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+        - name: zones
+          mountPath: "/zones"
+        - name: rundir
+          mountPath: "/rundir"
+      - name: knotc
+        image: cznic/knot
+        imagePullPolicy: IfNotPresent
+        args:
+          - sleep
+          - "1000000"
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+        - name: zones
+          mountPath: "/zones"
+        - name: rundir
+          mountPath: "/rundir"
+      volumes:
+        - name: rundir
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: config
+        - name: zones
+          configMap:
+            name: zones

@@ -1,0 +1,4 @@
+$TTL 3600
+$ORIGIN example.jp.
+@	IN	SOA	ns01.example.jp. root.example.jp. 10 3600 900 1814400 900
+@	IN	NS localhost.

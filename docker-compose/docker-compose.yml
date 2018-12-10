@@ -1,0 +1,18 @@
+version: '2'
+services:
+  knotd:
+    image: cznic/knot
+    command: /sbin/knotd
+    ports:
+     - "53:53/tcp"
+     - "53:53/udp"
+    volumes:
+     - ./config:/config 
+     - ./rundir:/rundir
+     - ./storage:/storage
+  knotc:
+    image: cznic/knot
+    command: /sbin/knotc
+    volumes:
+     - ./config:/config 
+     - ./rundir:/rundir
